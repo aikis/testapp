@@ -37,3 +37,10 @@ end
 
 # To use auth
 gem 'devise'
+
+# To use OmniAuth
+gem 'thin'
+gem "nifty-generators", :group => :development
+gem 'omniauth'
+gem "mocha", :group => :test
+gem 'mongrel', '1.2.0.pre2'
