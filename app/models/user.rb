@@ -11,7 +11,7 @@ class User < ActiveRecord::Base
   # :password_confirmation
   attr_accessible :username, :email, :password,  :remember_me, :invite, :invitefrom
 
-  before_create :set_invite
+  before_create :set_invite, :send_welcome_congrat_message
 
   # Omniauth req
   def apply_omniauth(omniauth)
@@ -28,5 +28,9 @@ class User < ActiveRecord::Base
 
   def set_invite
     self.invite = Digest::MD5.hexdigest(DateTime.now.to_s)
+  end
+
+  def send_welcome_congrat_message
+    UserMailer.congratulation_mail(self).deliver
   end
 end
