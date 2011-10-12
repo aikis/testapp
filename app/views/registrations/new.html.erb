@@ -12,6 +12,8 @@
   <div><%= f.label :password %><br />
   <%= f.password_field :password %></div>
 
+  <%= f.hidden_field :invitefrom, :value => params['invite_hash'] %>
+
   <div><%= f.submit "Sign up" %></div>
 <% end %>
 

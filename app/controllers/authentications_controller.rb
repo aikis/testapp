@@ -7,12 +7,16 @@ class AuthenticationsController < ApplicationController
     omniauth = request.env["omniauth.auth"]
     authentication = Authentication.find_by_provider_and_uid(omniauth['provider'], omniauth['uid'])
     if authentication
-      flash[:notice] = "Signed in successfully."
-      sign_in_and_redirect(:user, authentication.user)
+      if current_user && (current_user.id != authentication.user_id)
+        redirect_to :root, :notice => "Someone has been already added this #{omniauth['provider']} account."
+      else
+        flash[:notice] = "Signed in successfully."
+        sign_in_and_redirect(:user, authentication.user)
+      end
     elsif current_user
       current_user.authentications.create!(:provider => omniauth['provider'], :uid => omniauth['uid'])
       flash[:notice] = "Authentication successful."
-      redirect_to authentications_url
+      redirect_to "/home/index"
     else
       user = User.new
       user.apply_omniauth(omniauth)
@@ -29,7 +33,7 @@ class AuthenticationsController < ApplicationController
   def destroy
     @authentication = Authentication.find(params[:id])
     @authentication.destroy
-    redirect_to authentications_url, :notice => "Successfully destroyed authentication."
+    redirect_to :back, :notice => "Successfully destroyed authentication."
   end
 
   protected
@@ -39,5 +43,5 @@ class AuthenticationsController < ApplicationController
   def handle_unverified_request
     true
   end
-  
+
 end
